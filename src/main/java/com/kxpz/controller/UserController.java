@@ -1,16 +1,21 @@
 package com.kxpz.controller;
 
 
+import cn.hutool.core.util.RandomUtil;
 import com.kxpz.dto.LoginFormDTO;
 import com.kxpz.dto.Result;
+import com.kxpz.dto.UserDTO;
 import com.kxpz.entity.UserInfo;
 import com.kxpz.service.IUserInfoService;
 import com.kxpz.service.IUserService;
+import com.kxpz.utils.RegexUtils;
+import com.kxpz.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
+import java.util.Random;
 
 /**
  * <p>
@@ -36,8 +41,7 @@ public class UserController {
      */
     @PostMapping("code")
     public Result sendCode(@RequestParam("phone") String phone, HttpSession session) {
-        // TODO 发送短信验证码并保存验证码
-        return Result.fail("功能未完成");
+    return userService.sendCode(phone, session);
     }
 
     /**
@@ -47,7 +51,7 @@ public class UserController {
     @PostMapping("/login")
     public Result login(@RequestBody LoginFormDTO loginForm, HttpSession session){
         // TODO 实现登录功能
-        return Result.fail("功能未完成");
+        return userService.login(loginForm, session);
     }
 
     /**
@@ -59,11 +63,14 @@ public class UserController {
         // TODO 实现登出功能
         return Result.fail("功能未完成");
     }
-
+    /*
+    获取当前登录用户信息
+     */
     @GetMapping("/me")
     public Result me(){
-        // TODO 获取当前登录的用户并返回
-        return Result.fail("功能未完成");
+        // 获取当前登录的用户并返回
+        UserDTO user = UserHolder.getUser();
+        return Result.ok(user);
     }
 
     @GetMapping("/info/{id}")
