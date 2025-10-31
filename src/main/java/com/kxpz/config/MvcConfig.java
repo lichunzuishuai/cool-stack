@@ -24,7 +24,12 @@ public class MvcConfig implements WebMvcConfigurer {
                       "/blog/hot",
                       "/shop-type/**",
                       "/upload/**",
-                      "/voucher/**"
+                      "/voucher/**",
+                      "/doc.html",           // 添加文档页面
+                      "/swagger-ui.html",    // 添加Swagger页面
+                      "/v2/api-docs/**" ,
+                      "/webjars/**" ,   // 添加API文档路径
+                      "/swagger-resources/**"
               ).order(1);
       //刷新token
       registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate)).addPathPatterns("/**").order(0);

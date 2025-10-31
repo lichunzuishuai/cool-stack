@@ -26,3 +26,14 @@ mybatis-plus:
 logging:
   level:
     com.kxpz: debug
+knife4j:
+  enable: true
+  openapi:
+    title: "接口文档"
+    version: 1.0
+    group:
+      default:
+        group-name: "default"
+        api-rule: package
+        api-rule-resources:
+          - com.kxpz.controller

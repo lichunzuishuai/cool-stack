@@ -13,12 +13,14 @@ import com.kxpz.mapper.UserMapper;
 import com.kxpz.service.IUserService;
 import com.kxpz.utils.RedisConstants;
 import com.kxpz.utils.RegexUtils;
+import com.kxpz.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -78,7 +80,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //5. 不存在，创建新用户并保存
             user=createUserWithPhone(loginForm.getPhone());
         }
-
         // 生成token,作为登录令牌
         String token = UUID.randomUUID().toString();
         // 7.保存用户信息到redis
@@ -95,9 +96,23 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         stringRedisTemplate.expire(LOGIN_USER_KEY+token,LOGIN_USER_TTL,TimeUnit.SECONDS );
         // 9.返回token
         return Result.ok(token);
-
     }
-
+    /*
+    登出功能
+     */
+    @Override
+    public Result logout(HttpServletRequest request) {
+        //获取请求头中的token
+        String token = request.getHeader("authorizfation");
+        if(token == null){
+            return Result.fail("未登录！");
+        }
+        //删除Redis中的token
+        stringRedisTemplate.delete(LOGIN_USER_KEY+token);
+        //清理ThreadLocal中的数据
+        UserHolder.removeUser();
+        return Result.ok("删除成功");
+    }
     private User createUserWithPhone(String phone) {
         User user = new User();
         user.setPhone( phone);

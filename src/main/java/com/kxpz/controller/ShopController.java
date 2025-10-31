@@ -7,6 +7,7 @@ import com.kxpz.dto.Result;
 import com.kxpz.entity.Shop;
 import com.kxpz.service.IShopService;
 import com.kxpz.utils.SystemConstants;
+
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -57,8 +58,7 @@ public class ShopController {
     @PutMapping
     public Result updateShop(@RequestBody Shop shop) {
         // 写入数据库
-        shopService.updateById(shop);
-        return Result.ok();
+        return shopService.update(shop);
     }
 
     /**

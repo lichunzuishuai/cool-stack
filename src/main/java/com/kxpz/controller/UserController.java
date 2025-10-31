@@ -1,21 +1,23 @@
 package com.kxpz.controller;
 
 
-import cn.hutool.core.util.RandomUtil;
+
 import com.kxpz.dto.LoginFormDTO;
 import com.kxpz.dto.Result;
 import com.kxpz.dto.UserDTO;
 import com.kxpz.entity.UserInfo;
 import com.kxpz.service.IUserInfoService;
 import com.kxpz.service.IUserService;
-import com.kxpz.utils.RegexUtils;
 import com.kxpz.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Random;
+
+import static com.kxpz.utils.RedisConstants.LOGIN_USER_KEY;
+
 
 /**
  * <p>
@@ -59,9 +61,8 @@ public class UserController {
      * @return 无
      */
     @PostMapping("/logout")
-    public Result logout(){
-        // TODO 实现登出功能
-        return Result.fail("功能未完成");
+    public Result logout(HttpServletRequest request){
+        return userService.logout(request);
     }
     /*
     获取当前登录用户信息
