@@ -3,7 +3,7 @@ package com.kxpz.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
-import com.baomidou.mybatisplus.extension.conditions.query.QueryChainWrapper;
+
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kxpz.dto.LoginFormDTO;
 import com.kxpz.dto.Result;
@@ -11,11 +11,11 @@ import com.kxpz.dto.UserDTO;
 import com.kxpz.entity.User;
 import com.kxpz.mapper.UserMapper;
 import com.kxpz.service.IUserService;
-import com.kxpz.utils.RedisConstants;
+
 import com.kxpz.utils.RegexUtils;
 import com.kxpz.utils.UserHolder;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
+
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
