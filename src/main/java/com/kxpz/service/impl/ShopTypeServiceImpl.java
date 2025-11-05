@@ -42,12 +42,8 @@ public class ShopTypeServiceImpl extends ServiceImpl<ShopTypeMapper, ShopType> i
         List<String> range = stringRedisTemplate.opsForList().range(CACHE_SHOP_TYPE_KEY, 0, -1);
         // 2.判断缓存是否存在
         if(range!= null){
-            // 2.1 判断是否为空值标记
-            if (range.isEmpty() || (range.size() == 1 && "".equals(range.get(0)))) {
-                return List.of(); // 识别为空值缓存或空列表
-            }
-            // 2.2 缓存中有数据，直接返回
-            if (CollUtil.isNotEmpty( range)) {
+            // 2.1 缓存中有数据，直接返回
+            if(CollUtil.isNotEmpty( range)) {
                 return range.stream().map(json -> {
                     return JSONUtil.toBean(json, ShopType.class);
                 }).toList();
