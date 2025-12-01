@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.RandomUtil;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.kxpz.dto.LoginFormDTO;
 import com.kxpz.dto.Result;
@@ -67,6 +69,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (RegexUtils.isPhoneInvalid( loginForm.getPhone())) {
             return Result.fail("手机号格式错误！");
         }
+        String password = loginForm.getPassword();
+        String code = loginForm.getCode();
+        if(code!= null){
+            return loginWithCode(loginForm);
+        }else if(password != null){
+            return loginWithPassword(loginForm);
+        }else {
+            return Result.fail("请提供验证码或密码！");
+        }
+
+    }
+    //密码登录
+    private Result loginWithPassword(LoginFormDTO loginForm){
+        User user = query()
+                        .eq("phone", loginForm.getPhone())
+                        .eq("password", loginForm.getPassword()).one();
+        if(user== null){
+            return Result.fail("用户不存在！");
+        }
+        return getToken(user);
+    }
+    //验证码登录
+    private Result loginWithCode(LoginFormDTO loginForm) {
         // 2.校验验证码
         String cacheCode = stringRedisTemplate.opsForValue().get(LOGIN_CODE_KEY + loginForm.getPhone());
         String code = loginForm.getCode();
@@ -80,6 +105,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             //5. 不存在，创建新用户并保存
             user=createUserWithPhone(loginForm.getPhone());
         }
+        return getToken(user);
+    }
+
+    private Result getToken(User user) {
         // 生成token,作为登录令牌
         String token = UUID.randomUUID().toString();
         // 7.保存用户信息到redis
@@ -97,13 +126,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         // 9.返回token
         return Result.ok(token);
     }
+
     /*
     登出功能
      */
     @Override
     public Result logout(HttpServletRequest request) {
         //获取请求头中的token
-        String token = request.getHeader("authorizfation");
+        String token = request.getHeader("authorization");
         if(token == null){
             return Result.fail("未登录！");
         }
